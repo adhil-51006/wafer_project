@@ -1,0 +1,24 @@
+# Local Python environment and generated interpreter files
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.cache/
+
+# Raw data, processed caches, and trained model weights are reproducible but large
+LSWMD.pkl
+data/
+checkpoints/
+*.pt
+*.pth
+
+# Generated plots/results stay local until a milestone explicitly publishes them
+figures/*
+!figures/.gitkeep
+results/*
+!results/.gitkeep
+# Operating-system and tool files
+.DS_Store
+.idea/
+.vscode/
