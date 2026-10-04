@@ -20,6 +20,7 @@ figures/*
 results/*
 !results/.gitkeep
 !results/m1_summary.json
+!results/m2_random_sanity.csv
 # Operating-system and tool files
 .DS_Store
 .idea/

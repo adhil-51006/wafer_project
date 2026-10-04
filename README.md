@@ -15,9 +15,11 @@ to the nearest known wafer can flag a defect class that the model never saw.
   software-version logging.
 - M1: labeled-wafer extraction, categorical 32×32 resizing, local array cache,
   class-count validation, and a visual resize check.
+- M2: stratified fit/dev/test splits, capped test-query sampling, per-class
+  precision@5, and a random-retrieval sanity check.
 
-Later milestones will add evaluation, retrieval models, out-of-distribution
-detection, and final figures.
+Later milestones will add retrieval models, out-of-distribution detection, and
+final figures.
 
 ## Setup
 
@@ -45,3 +47,14 @@ blending the categorical values, and writes the local cache under
 `data/processed/`. Raw data and processed arrays are excluded from Git.
 
 ![Original and resized examples for all nine classes](figures/m1_resize_examples.png)
+
+## Verify the evaluation harness
+
+```bash
+python scripts/check_random_retriever.py
+```
+
+This creates a stratified split, samples at most 2,000 test queries per class,
+and confirms that random precision@5 is consistent with each class's frequency
+in the training database. The generated comparison is saved to
+`results/m2_random_sanity.csv`.

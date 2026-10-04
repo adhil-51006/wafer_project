@@ -5,6 +5,7 @@ neighbors = 5
 
 [evaluation]
 test_fraction = 0.20
+dev_fraction_of_train = 0.20
 main_seeds = [42, 123, 456, 789, 2026]
 ood_seeds = [42, 123, 456]
 query_cap_per_class = 2000
