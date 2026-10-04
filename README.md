@@ -17,9 +17,11 @@ to the nearest known wafer can flag a defect class that the model never saw.
   class-count validation, and a visual resize check.
 - M2: stratified fit/dev/test splits, capped test-query sampling, per-class
   precision@5, and a random-retrieval sanity check.
+- M3: standardized handcrafted spatial features and nearest-neighbor baseline
+  retrieval, evaluated on the development split.
 
-Later milestones will add retrieval models, out-of-distribution detection, and
-final figures.
+Later milestones will add the learned retrieval model, final comparison,
+out-of-distribution detection, and final figures.
 
 ## Setup
 
@@ -58,3 +60,15 @@ This creates a stratified split, samples at most 2,000 test queries per class,
 and confirms that random precision@5 is consistent with each class's frequency
 in the training database. The generated comparison is saved to
 `results/m2_random_sanity.csv`.
+
+## Run the handcrafted baseline
+
+```bash
+python scripts/run_baseline_dev.py
+```
+
+The first run extracts 36 spatial features for every processed wafer and caches
+them locally. The script fits its standardizer and nearest-neighbor database on
+fit rows only, uses development rows as queries, and saves per-class precision@5
+to `results/m3_baseline_dev.csv`. Test rows remain untouched during feature
+design.

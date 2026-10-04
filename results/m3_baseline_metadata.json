@@ -1,0 +1,11 @@
+{
+  "seed": 42,
+  "feature_count": 36,
+  "database_rows": 110688,
+  "query_rows": 6083,
+  "database_query_overlap": 0,
+  "scaler_fit_rows": 110688,
+  "scaler_fit_scope": "fit database only",
+  "macro_all": 0.6346912953995493,
+  "macro_defects": 0.591790207324493
+}
