@@ -16,8 +16,10 @@ checkpoints/
 # Generated plots/results stay local until a milestone explicitly publishes them
 figures/*
 !figures/.gitkeep
+!figures/m1_resize_examples.png
 results/*
 !results/.gitkeep
+!results/m1_summary.json
 # Operating-system and tool files
 .DS_Store
 .idea/

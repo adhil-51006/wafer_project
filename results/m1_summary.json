@@ -1,0 +1,26 @@
+{
+  "source_rows": 811457,
+  "labeled_rows": 172950,
+  "maps_shape": [
+    172950,
+    32,
+    32
+  ],
+  "maps_dtype": "uint8",
+  "maps_values": [
+    0,
+    1,
+    2
+  ],
+  "class_counts": {
+    "none": 147431,
+    "Center": 4294,
+    "Donut": 555,
+    "Edge-Ring": 9680,
+    "Edge-Loc": 5189,
+    "Loc": 3593,
+    "Scratch": 1193,
+    "Random": 866,
+    "Near-full": 149
+  }
+}
