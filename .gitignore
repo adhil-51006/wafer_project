@@ -17,6 +17,7 @@ checkpoints/
 figures/*
 !figures/.gitkeep
 !figures/m1_resize_examples.png
+!figures/m4_training_curves.png
 results/*
 !results/.gitkeep
 !results/m1_summary.json
@@ -24,6 +25,9 @@ results/*
 !results/m3_baseline_dev.csv
 !results/m3_baseline_metadata.json
 !results/m3_feature_names.json
+!results/m4_overfit_check.json
+!results/m4_training_history.csv
+!results/m4_training_summary.json
 # Operating-system and tool files
 .DS_Store
 .idea/

@@ -1,0 +1,22 @@
+{
+  "seed": 42,
+  "batch_size": 64,
+  "classes": {
+    "none": 8,
+    "Center": 7,
+    "Donut": 7,
+    "Edge-Ring": 7,
+    "Edge-Loc": 7,
+    "Loc": 7,
+    "Scratch": 7,
+    "Random": 7,
+    "Near-full": 7
+  },
+  "embedding_dim": 64,
+  "initial_loss": 1.0936164855957031,
+  "final_loss": 0.019138239324092865,
+  "steps": 1390,
+  "pixel_accuracy": 0.993988037109375,
+  "fail_iou": 0.9774509072303772,
+  "passed": true
+}

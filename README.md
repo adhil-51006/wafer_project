@@ -19,9 +19,11 @@ to the nearest known wafer can flag a defect class that the model never saw.
   precision@5, and a random-retrieval sanity check.
 - M3: standardized handcrafted spatial features and nearest-neighbor baseline
   retrieval, evaluated on the development split.
+- M4: categorical convolutional autoencoder, one-batch overfit verification,
+  balanced full training, early stopping, and deterministic 64-number embeddings.
 
-Later milestones will add the learned retrieval model, final comparison,
-out-of-distribution detection, and final figures.
+Later milestones will add learned retrieval evaluation, the final comparison,
+out-of-distribution detection, and portfolio figures.
 
 ## Setup
 
@@ -72,3 +74,18 @@ them locally. The script fits its standardizer and nearest-neighbor database on
 fit rows only, uses development rows as queries, and saves per-class precision@5
 to `results/m3_baseline_dev.csv`. Test rows remain untouched during feature
 design.
+
+## Train the convolutional autoencoder
+
+```bash
+python scripts/check_autoencoder_overfit.py
+MPLCONFIGDIR=.cache/matplotlib python scripts/train_autoencoder.py
+```
+
+The first command verifies that the model can memorize one mixed batch. Full
+training uses all fit-split defect wafers and 5,000 sampled `none` wafers, while
+the separate development split controls checkpoint selection. Checkpoints stay
+local under `checkpoints/`; the training history, summary, and learning curves
+are reproducible tracked outputs.
+
+![Autoencoder training and validation curves](figures/m4_training_curves.png)

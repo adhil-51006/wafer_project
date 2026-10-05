@@ -1,0 +1,39 @@
+{
+  "seed": 42,
+  "embedding_dim": 64,
+  "train_rows": 21332,
+  "validation_rows": 6083,
+  "train_validation_overlap": 0,
+  "train_class_counts": {
+    "Center": 2748,
+    "Donut": 355,
+    "Edge-Loc": 3321,
+    "Edge-Ring": 6195,
+    "Loc": 2300,
+    "Near-full": 95,
+    "Random": 555,
+    "Scratch": 763,
+    "none": 5000
+  },
+  "validation_class_counts": {
+    "Center": 687,
+    "Donut": 89,
+    "Edge-Loc": 830,
+    "Edge-Ring": 1549,
+    "Loc": 575,
+    "Near-full": 24,
+    "Random": 138,
+    "Scratch": 191,
+    "none": 2000
+  },
+  "reference_first_epoch_loss": 0.4741715835447542,
+  "actual_first_epoch_loss": 0.4741715835447542,
+  "first_epoch_reproducible": true,
+  "epochs_completed": 50,
+  "best_epoch": 50,
+  "best_validation_loss": 0.2282364198703153,
+  "best_validation_pixel_accuracy": 0.9154205046338155,
+  "best_validation_fail_iou": 0.37795682693930527,
+  "elapsed_seconds": 2806.1127202510834,
+  "checkpoint": "checkpoints/m4_autoencoder_best.pt"
+}
