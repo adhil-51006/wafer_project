@@ -1,0 +1,137 @@
+{
+  "seed": 42,
+  "selection": "one uniformly sampled outer-test query per class, before retrieval",
+  "checkpoint": "m5_autoencoder_seed_42.pt",
+  "database_rows": 138360,
+  "query_database_overlap": 0,
+  "rows": [
+    {
+      "query_index": 29988,
+      "query_label": "none",
+      "neighbors": [
+        {
+          "index": 33256,
+          "label": "none",
+          "distance": 26.518388748168945
+        },
+        {
+          "index": 4805,
+          "label": "none",
+          "distance": 26.518388748168945
+        },
+        {
+          "index": 2071,
+          "label": "none",
+          "distance": 27.404415130615234
+        },
+        {
+          "index": 5515,
+          "label": "none",
+          "distance": 27.433504104614258
+        },
+        {
+          "index": 31318,
+          "label": "none",
+          "distance": 27.93870735168457
+        }
+      ],
+      "matching_neighbors": 5
+    },
+    {
+      "query_index": 28079,
+      "query_label": "Center",
+      "neighbors": [
+        {
+          "index": 26578,
+          "label": "Center",
+          "distance": 20.04261589050293
+        },
+        {
+          "index": 25445,
+          "label": "Center",
+          "distance": 20.870832443237305
+        },
+        {
+          "index": 27419,
+          "label": "Center",
+          "distance": 21.17276954650879
+        },
+        {
+          "index": 27414,
+          "label": "Center",
+          "distance": 21.291122436523438
+        },
+        {
+          "index": 27897,
+          "label": "Center",
+          "distance": 21.44864273071289
+        }
+      ],
+      "matching_neighbors": 5
+    },
+    {
+      "query_index": 24971,
+      "query_label": "Donut",
+      "neighbors": [
+        {
+          "index": 23172,
+          "label": "Donut",
+          "distance": 40.9058723449707
+        },
+        {
+          "index": 22914,
+          "label": "Random",
+          "distance": 43.32877731323242
+        },
+        {
+          "index": 23179,
+          "label": "Donut",
+          "distance": 46.00737762451172
+        },
+        {
+          "index": 22923,
+          "label": "none",
+          "distance": 48.362525939941406
+        },
+        {
+          "index": 24159,
+          "label": "Donut",
+          "distance": 51.54392623901367
+        }
+      ],
+      "matching_neighbors": 3
+    },
+    {
+      "query_index": 45032,
+      "query_label": "Scratch",
+      "neighbors": [
+        {
+          "index": 42345,
+          "label": "none",
+          "distance": 19.759754180908203
+        },
+        {
+          "index": 94873,
+          "label": "none",
+          "distance": 20.26933479309082
+        },
+        {
+          "index": 39939,
+          "label": "none",
+          "distance": 21.56730079650879
+        },
+        {
+          "index": 40390,
+          "label": "none",
+          "distance": 21.66275405883789
+        },
+        {
+          "index": 94877,
+          "label": "none",
+          "distance": 21.745990753173828
+        }
+      ],
+      "matching_neighbors": 0
+    }
+  ]
+}

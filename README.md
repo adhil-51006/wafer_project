@@ -1,116 +1,95 @@
 # Wafer Map Similarity Search
 
-This project compares two ways to retrieve historical wafer maps with similar
-failure patterns from the WM-811K dataset:
+![Example test wafers and their five retrieved neighbors](figures/m7_retrieval_demo.png)
 
-1. spatial features designed by hand, followed by nearest-neighbor search;
-2. embeddings learned by a convolutional autoencoder, followed by the same search.
+A wafer map shows which chip locations passed or failed a test. This project
+retrieves five historical wafers with similar failure patterns from the labeled
+WM-811K data. It compares hand-designed spatial features with 64-number
+embeddings learned by a PyTorch convolutional autoencoder.
 
-The main metric is per-class precision@5. The project also tests whether distance
-to the nearest known wafer can flag a defect class that the model never saw.
+In the demo, each row starts with a fixed-seed test wafer. The five images to
+its right are the closest wafers in the training database. Green labels match
+the query label; red labels differ. The query was never in the database.
 
-## Current status
+## Results
 
-- M0: project structure, dependencies, fixed random seeds, tests, and
-  software-version logging.
-- M1: labeled-wafer extraction, categorical 32×32 resizing, local array cache,
-  class-count validation, and a visual resize check.
-- M2: stratified fit/dev/test splits, capped test-query sampling, per-class
-  precision@5, and a random-retrieval sanity check.
-- M3: standardized handcrafted spatial features and nearest-neighbor baseline
-  retrieval, evaluated on the development split.
-- M4: categorical convolutional autoencoder, one-batch overfit verification,
-  balanced full training, early stopping, and deterministic 64-number embeddings.
-- M5: three-seed test comparison of random, handcrafted, and autoencoder
-  retrieval on identical databases and queries, with per-class confusion tables.
+Precision@5 is the fraction of five retrieved neighbors whose label matches
+the query. Each score below is the mean ± standard deviation over three
+stratified train/test splits. Within each split, all three methods use the
+same database and test queries. The full results and query counts are in
+[the comparison report](results/m5_report.md).
 
-Later milestones will add out-of-distribution detection and portfolio figures.
+<!-- RESULTS_TABLE_START -->
 
-## Setup
+| Query class | Queries per split | Random | Handcrafted | Autoencoder |
+|---|---:|---:|---:|---:|
+| none | 2000 | 0.852 ± 0.003 | 0.975 ± 0.002 | 0.986 ± 0.003 |
+| Center | 859 | 0.025 ± 0.002 | 0.784 ± 0.014 | 0.803 ± 0.010 |
+| Donut | 111 | 0.002 ± 0.002 | 0.704 ± 0.028 | 0.707 ± 0.018 |
+| Edge-Ring | 1936 | 0.057 ± 0.003 | 0.909 ± 0.009 | 0.951 ± 0.003 |
+| Edge-Loc | 1038 | 0.031 ± 0.001 | 0.377 ± 0.006 | 0.463 ± 0.012 |
+| Loc | 718 | 0.021 ± 0.003 | 0.264 ± 0.008 | 0.303 ± 0.012 |
+| Scratch | 239 | 0.009 ± 0.004 | 0.052 ± 0.015 | 0.121 ± 0.003 |
+| Random | 173 | 0.008 ± 0.004 | 0.812 ± 0.006 | 0.826 ± 0.025 |
+| Near-full | 30 | 0.000 ± 0.000 | 0.920 ± 0.024 | 0.831 ± 0.038 |
+| Macro, defects | — | 0.019 ± 0.001 | 0.603 ± 0.003 | 0.626 ± 0.003 |
+
+<!-- RESULTS_TABLE_END -->
+
+![Precision at five by wafer class](figures/m5_comparison.png)
+
+The autoencoder has the higher mean on most classes. The handcrafted baseline
+is better on Near-full, which has few test queries. Scratch remains difficult
+for both approaches. The [confusion tables](results/m5_confusion_autoencoder.csv)
+show where retrieved labels differ from query labels.
+
+## How it works
+
+The processed 32×32 map uses three integer values: `0` outside the wafer,
+`1` for a passing die, and `2` for a failing die. The autoencoder converts
+these into three input channels. Its encoder compresses each map to 64 numbers;
+its decoder learns to reconstruct the original map. After training, the
+encoder supplies the 64-number embedding used in nearest-neighbor search.
+
+The baseline instead measures radial failure density, direction, global
+statistics, and line-like patterns. Both methods use Euclidean distance to
+find the five closest database wafers. Random retrieval provides a chance
+reference.
+
+## Reproduce
+
+Place `LSWMD.pkl` in the project root. It and the generated arrays and model
+checkpoints remain local; Git tracks the code, small result files, and figures.
+Run the commands from the project root:
 
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
-python -m pip install --upgrade pip
 python -m pip install -r requirements.txt
 python -m pip install -e .
-pytest
 python scripts/check_setup.py
-```
-
-The raw `LSWMD.pkl` file belongs in the repository root but is intentionally
-excluded from Git because it is large and must remain local.
-
-## Prepare the labeled data
-
-```bash
 MPLCONFIGDIR=.cache/matplotlib python scripts/process_wm811k.py
-```
-
-The command keeps the 172,950 labeled wafers, resizes their maps without
-blending the categorical values, and writes the local cache under
-`data/processed/`. Raw data and processed arrays are excluded from Git.
-
-![Original and resized examples for all nine classes](figures/m1_resize_examples.png)
-
-## Verify the evaluation harness
-
-```bash
 python scripts/check_random_retriever.py
-```
-
-This creates a stratified split, samples at most 2,000 test queries per class,
-and confirms that random precision@5 is consistent with each class's frequency
-in the training database. The generated comparison is saved to
-`results/m2_random_sanity.csv`.
-
-## Run the handcrafted baseline
-
-```bash
 python scripts/run_baseline_dev.py
-```
-
-The first run extracts 36 spatial features for every processed wafer and caches
-them locally. The script fits its standardizer and nearest-neighbor database on
-fit rows only, uses development rows as queries, and saves per-class precision@5
-to `results/m3_baseline_dev.csv`. Test rows remain untouched during feature
-design.
-
-## Train the convolutional autoencoder
-
-```bash
 python scripts/check_autoencoder_overfit.py
-MPLCONFIGDIR=.cache/matplotlib python scripts/train_autoencoder.py
-```
-
-The first command verifies that the model can memorize one mixed batch. Full
-training uses all fit-split defect wafers and 5,000 sampled `none` wafers, while
-the separate development split controls checkpoint selection. Checkpoints stay
-local under `checkpoints/`; the training history, summary, and learning curves
-are reproducible tracked outputs.
-
-![Autoencoder training and validation curves](figures/m4_training_curves.png)
-
-## Compare retrieval methods
-
-```bash
 MPLCONFIGDIR=.cache/matplotlib python scripts/train_m5_models.py
 MPLCONFIGDIR=.cache/matplotlib python scripts/run_m5_comparison.py
+MPLCONFIGDIR=.cache/matplotlib python scripts/build_retrieval_demo.py
+python scripts/render_readme_results.py
+pytest
 ```
 
-The first command trains any missing seed-specific autoencoders with the same
-20-epoch budget. All three split checkpoints stay local and are excluded from
-Git. The second command gives random retrieval,
-handcrafted features, and autoencoder embeddings the same training database and
-test queries within each seed. It reports per-class precision@5 as a mean and
-sample standard deviation across three stratified split seeds, along with
-retrieval-confusion tables that reveal which labels each method confuses.
+The first processing run creates the local 32×32 array cache. Model training
+uses all defect wafers in the fit split plus a sample of 5,000 `none` wafers,
+with a separate development split for checkpoint selection. The comparison
+embeds the full training database, including the `none` class. Existing
+checkpoints are reused by the training launcher.
 
-![Per-class retrieval comparison](figures/m5_comparison.png)
+## Limits
 
-Across the three splits, defect-only macro precision@5 is 0.603 for the
-handcrafted baseline and 0.626 for the autoencoder. The autoencoder has the
-higher mean on every class except Near-full, where the baseline scores 0.920
-versus 0.831. Near-full has only 30 queries per split, so that comparison is
-noisy. Scratch remains the hardest defect for both methods even though the
-autoencoder raises its mean precision@5 from 0.052 to 0.121.
+The labels measure agreement with human-assigned defect categories, not shared
+manufacturing causes. Wafers from the same production lot may be similar,
+so a random split can make retrieval scores optimistic. Resizing to 32×32 may
+erase thin scratches, and the database contains many more `none` wafers than
+rare defects. Near-full has few test queries. The project evaluates retrieval
+of known classes; it does not evaluate whether a new defect type can be flagged.
