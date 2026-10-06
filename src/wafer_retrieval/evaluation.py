@@ -30,6 +30,40 @@ class PrecisionAtKResult:
     macro_defects: float | None
 
 
+def retrieval_confusion(
+    query_labels: np.ndarray,
+    neighbor_labels: np.ndarray,
+    class_order: tuple[str, ...] | list[str],
+) -> np.ndarray:
+    """Return row-normalized neighbor-label frequencies for each query class.
+
+    Row ``i`` describes queries with ``class_order[i]`` and column ``j`` is the
+    fraction of their retrieved neighbors labeled ``class_order[j]``.
+    """
+    query_labels = np.asarray(query_labels)
+    neighbor_labels = np.asarray(neighbor_labels)
+    classes = list(class_order)
+    if query_labels.ndim != 1 or neighbor_labels.ndim != 2:
+        raise ValueError("Query labels must be 1D and neighbor labels must be 2D")
+    if len(query_labels) != len(neighbor_labels):
+        raise ValueError("Queries and neighbor rows must have the same length")
+    if len(classes) != len(set(classes)):
+        raise ValueError("Class order must not contain duplicates")
+
+    matrix = np.zeros((len(classes), len(classes)), dtype=np.float64)
+    for row, query_class in enumerate(classes):
+        retrieved = neighbor_labels[query_labels == query_class].reshape(-1)
+        if not len(retrieved):
+            continue
+        for column, neighbor_class in enumerate(classes):
+            matrix[row, column] = np.mean(retrieved == neighbor_class)
+
+        # A complete class list should account for every retrieved neighbor.
+        if not np.isclose(matrix[row].sum(), 1.0):
+            raise ValueError("Class order does not cover all neighbor labels")
+    return matrix
+
+
 def make_stratified_split(
     labels: np.ndarray,
     seed: int,

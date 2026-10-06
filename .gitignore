@@ -18,6 +18,7 @@ figures/*
 !figures/.gitkeep
 !figures/m1_resize_examples.png
 !figures/m4_training_curves.png
+!figures/m5_comparison.png
 results/*
 !results/.gitkeep
 !results/m1_summary.json
@@ -28,6 +29,13 @@ results/*
 !results/m4_overfit_check.json
 !results/m4_training_history.csv
 !results/m4_training_summary.json
+!results/m5_comparison.csv
+!results/m5_confusion_autoencoder.csv
+!results/m5_confusion_baseline.csv
+!results/m5_confusion_random.csv
+!results/m5_metadata.json
+!results/m5_per_seed.csv
+!results/m5_report.md
 # Operating-system and tool files
 .DS_Store
 .idea/

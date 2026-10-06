@@ -6,6 +6,7 @@ import pytest
 from wafer_retrieval.evaluation import (
     make_stratified_split,
     precision_at_k,
+    retrieval_confusion,
     random_neighbor_indices,
     sample_queries_by_class,
 )
@@ -178,3 +179,31 @@ def test_random_retriever_scores_close_to_database_class_priors() -> None:
     assert result.per_class["Center"] == pytest.approx(0.5, abs=0.01)
     assert result.per_class["Donut"] == pytest.approx(0.3, abs=0.01)
     assert result.per_class["Random"] == pytest.approx(0.2, abs=0.01)
+
+
+def test_retrieval_confusion_counts_neighbor_labels_by_query_class() -> None:
+    query_labels = np.array(["Center", "Center", "Donut"])
+    neighbor_labels = np.array(
+        [
+            ["Center", "Center", "Donut"],
+            ["Center", "Donut", "Donut"],
+            ["Donut", "Center", "Donut"],
+        ]
+    )
+
+    matrix = retrieval_confusion(
+        query_labels, neighbor_labels, ["Center", "Donut"]
+    )
+
+    np.testing.assert_allclose(matrix[0], [3 / 6, 3 / 6])
+    np.testing.assert_allclose(matrix[1], [1 / 3, 2 / 3])
+    np.testing.assert_allclose(matrix.sum(axis=1), 1.0)
+
+
+def test_retrieval_confusion_rejects_an_incomplete_class_list() -> None:
+    with pytest.raises(ValueError, match="does not cover"):
+        retrieval_confusion(
+            np.array(["Center"]),
+            np.array([["Center", "Unknown"]]),
+            ["Center"],
+        )

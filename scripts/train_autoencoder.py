@@ -7,6 +7,9 @@ import json
 from pathlib import Path
 import time
 
+import matplotlib
+
+matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 import torch
@@ -62,6 +65,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--learning-rate", type=float, default=0.001)
     parser.add_argument("--max-epochs", type=int, default=50)
     parser.add_argument("--patience", type=int, default=5)
+    parser.add_argument("--num-threads", type=int, default=4)
+    parser.add_argument(
+        "--skip-figure",
+        action="store_true",
+        help="Skip per-run curves when only a retrieval checkpoint is needed.",
+    )
     return parser.parse_args()
 
 
@@ -159,7 +168,7 @@ def save_curves(history: list[dict[str, float]], figure_path: Path) -> None:
 def main() -> None:
     args = parse_args()
     project_root = Path(__file__).resolve().parents[1]
-    torch.set_num_threads(4)
+    torch.set_num_threads(args.num_threads)
     maps = np.load(args.maps, mmap_mode="r")
     labels = np.load(args.labels, mmap_mode="r")
     split = make_stratified_split(labels, seed=args.seed)
@@ -270,7 +279,8 @@ def main() -> None:
         )
         writer.writeheader()
         writer.writerows(history)
-    save_curves(history, args.figure)
+    if not args.skip_figure:
+        save_curves(history, args.figure)
 
     train_counts = Counter(labels[train_indices].tolist())
     validation_counts = Counter(labels[validation_indices].tolist())

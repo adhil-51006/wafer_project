@@ -1,0 +1,44 @@
+{
+  "seeds": [
+    42,
+    123,
+    456
+  ],
+  "k": 5,
+  "query_cap_per_class": 2000,
+  "distance": "euclidean",
+  "standard_deviation": "sample standard deviation across seeds (ddof=1)",
+  "index_audit": [
+    {
+      "seed": 42,
+      "database_rows": 138360,
+      "query_rows": 7104,
+      "overlap": 0,
+      "database_index_sha256_16": "78ed4c41b0d266d2",
+      "query_index_sha256_16": "cde16dd1c8d7fce7",
+      "checkpoint": "m5_autoencoder_seed_42.pt",
+      "all_methods_used_identical_indices": true
+    },
+    {
+      "seed": 123,
+      "database_rows": 138360,
+      "query_rows": 7104,
+      "overlap": 0,
+      "database_index_sha256_16": "abefa61caf2b9b6e",
+      "query_index_sha256_16": "29c3cee0dd7a52a3",
+      "checkpoint": "m5_autoencoder_seed_123.pt",
+      "all_methods_used_identical_indices": true
+    },
+    {
+      "seed": 456,
+      "database_rows": 138360,
+      "query_rows": 7104,
+      "overlap": 0,
+      "database_index_sha256_16": "e8540c9cc5fb7858",
+      "query_index_sha256_16": "e1fb1c7a597d43f5",
+      "checkpoint": "m5_autoencoder_seed_456.pt",
+      "all_methods_used_identical_indices": true
+    }
+  ],
+  "elapsed_seconds": 412.28137278556824
+}
