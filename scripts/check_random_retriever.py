@@ -8,24 +8,12 @@ from pathlib import Path
 
 import numpy as np
 
+from wafer_retrieval.data import CLASS_ORDER
 from wafer_retrieval.evaluation import (
     make_stratified_split,
     precision_at_k,
     random_neighbor_indices,
     sample_queries_by_class,
-)
-
-
-CLASS_ORDER = (
-    "none",
-    "Center",
-    "Donut",
-    "Edge-Ring",
-    "Edge-Loc",
-    "Loc",
-    "Scratch",
-    "Random",
-    "Near-full",
 )
 
 

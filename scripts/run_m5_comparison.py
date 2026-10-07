@@ -14,7 +14,7 @@ import torch
 from sklearn import config_context
 from sklearn.neighbors import NearestNeighbors
 
-from wafer_retrieval.autoencoder import WaferAutoencoder
+from wafer_retrieval.data import CLASS_ORDER
 from wafer_retrieval.evaluation import (
     make_stratified_split,
     precision_at_k,
@@ -23,20 +23,9 @@ from wafer_retrieval.evaluation import (
     sample_queries_by_class,
 )
 from wafer_retrieval.features import scale_database_and_queries
-from wafer_retrieval.training import extract_embeddings
+from wafer_retrieval.training import extract_embeddings, load_autoencoder_checkpoint
 
 
-CLASS_ORDER = (
-    "none",
-    "Center",
-    "Donut",
-    "Edge-Ring",
-    "Edge-Loc",
-    "Loc",
-    "Scratch",
-    "Random",
-    "Near-full",
-)
 METHODS = ("random", "baseline", "autoencoder")
 
 
@@ -59,19 +48,6 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def checkpoint_for_seed(directory: Path, seed: int) -> Path:
-    candidate = directory / f"m5_autoencoder_seed_{seed}.pt"
-    if candidate.exists():
-        return candidate
-    if seed == 42:
-        m4_checkpoint = directory / "m4_autoencoder_best.pt"
-        if m4_checkpoint.exists():
-            return m4_checkpoint
-    raise FileNotFoundError(
-        f"Missing autoencoder checkpoint for seed {seed}: expected {candidate}"
-    )
-
-
 def index_digest(indices: np.ndarray) -> str:
     """Make a short audit fingerprint for an exact set of row indices."""
     return hashlib.sha256(np.asarray(indices, dtype=np.int64).tobytes()).hexdigest()[:16]
@@ -91,18 +67,6 @@ def nearest_labels(
     with config_context(working_memory=128):
         _, positions = search.kneighbors(query_vectors)
     return database_labels[positions]
-
-
-def load_model(checkpoint_path: Path, expected_seed: int) -> WaferAutoencoder:
-    checkpoint = torch.load(checkpoint_path, map_location="cpu", weights_only=False)
-    if checkpoint["seed"] != expected_seed:
-        raise ValueError(
-            f"Checkpoint seed {checkpoint['seed']} does not match split seed {expected_seed}"
-        )
-    model = WaferAutoencoder(embedding_dim=int(checkpoint["embedding_dim"]))
-    model.load_state_dict(checkpoint["model_state_dict"])
-    model.eval()
-    return model
 
 
 def write_confusion_csv(path: Path, matrix: np.ndarray) -> None:
@@ -228,8 +192,8 @@ def main() -> None:
         )
         del database_features, query_features
 
-        checkpoint_path = checkpoint_for_seed(args.checkpoint_dir, seed)
-        model = load_model(checkpoint_path, expected_seed=seed)
+        checkpoint_path = args.checkpoint_dir / f"m5_autoencoder_seed_{seed}.pt"
+        model = load_autoencoder_checkpoint(checkpoint_path, expected_seed=seed)
         # PyTorch produces 64-number vectors; NumPy/scikit-learn performs search.
         database_embeddings = extract_embeddings(model, maps[database_indices])
         query_embeddings = extract_embeddings(model, maps[query_indices])

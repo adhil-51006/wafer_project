@@ -8,24 +8,12 @@ import numpy as np
 import torch
 
 from wafer_retrieval.autoencoder import WaferAutoencoder, one_hot_maps
+from wafer_retrieval.data import CLASS_ORDER
 from wafer_retrieval.evaluation import make_stratified_split
 from wafer_retrieval.reproducibility import set_seed
 from wafer_retrieval.training import (
     categorical_reconstruction_loss,
     reconstruction_metrics,
-)
-
-
-CLASS_ORDER = (
-    "none",
-    "Center",
-    "Donut",
-    "Edge-Ring",
-    "Edge-Loc",
-    "Loc",
-    "Scratch",
-    "Random",
-    "Near-full",
 )
 
 

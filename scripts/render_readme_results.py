@@ -3,11 +3,8 @@
 import csv
 from pathlib import Path
 
+from wafer_retrieval.data import CLASS_ORDER
 
-CLASS_ORDER = (
-    "none", "Center", "Donut", "Edge-Ring", "Edge-Loc", "Loc",
-    "Scratch", "Random", "Near-full", "macro_defects",
-)
 START = "<!-- RESULTS_TABLE_START -->"
 END = "<!-- RESULTS_TABLE_END -->"
 
@@ -23,7 +20,7 @@ def main() -> None:
         "| Query class | Queries per split | Random | Handcrafted | Autoencoder |",
         "|---|---:|---:|---:|---:|",
     ]
-    for label in CLASS_ORDER:
+    for label in (*CLASS_ORDER, "macro_defects"):
         row = rows[label]
         count = "—" if not row["query_count_mean"] else str(int(float(row["query_count_mean"])))
         scores = [

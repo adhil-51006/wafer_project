@@ -6,6 +6,19 @@ import numpy as np
 from skimage.transform import resize
 
 
+CLASS_ORDER = (
+    "none",
+    "Center",
+    "Donut",
+    "Edge-Ring",
+    "Edge-Loc",
+    "Loc",
+    "Scratch",
+    "Random",
+    "Near-full",
+)
+
+
 def _flatten_nested(value: object) -> Iterator[object]:
     """Yield individual items from nested arrays, lists, and tuples."""
     if isinstance(value, np.ndarray):

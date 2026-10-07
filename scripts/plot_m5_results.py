@@ -10,18 +10,8 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import numpy as np
 
+from wafer_retrieval.data import CLASS_ORDER
 
-CLASS_ORDER = (
-    "none",
-    "Center",
-    "Donut",
-    "Edge-Ring",
-    "Edge-Loc",
-    "Loc",
-    "Scratch",
-    "Random",
-    "Near-full",
-)
 METHODS = ("random", "baseline", "autoencoder")
 
 

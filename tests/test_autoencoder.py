@@ -1,3 +1,5 @@
+from pathlib import Path
+
 import numpy as np
 import pytest
 import torch
@@ -6,6 +8,7 @@ from wafer_retrieval.autoencoder import WaferAutoencoder, one_hot_maps
 from wafer_retrieval.training import (
     categorical_reconstruction_loss,
     extract_embeddings,
+    load_autoencoder_checkpoint,
     reconstruction_metrics,
 )
 
@@ -76,3 +79,17 @@ def test_embedding_extraction_is_deterministic_numpy_output() -> None:
     assert first.shape == (5, 64)
     np.testing.assert_array_equal(first, repeated)
     np.testing.assert_allclose(first, different_batching, rtol=1e-6, atol=1e-7)
+
+
+def test_checkpoint_loader_rejects_a_different_split_seed(tmp_path: Path) -> None:
+    model = WaferAutoencoder(embedding_dim=64)
+    checkpoint_path = tmp_path / "model.pt"
+    torch.save(
+        {"seed": 42, "embedding_dim": 64, "model_state_dict": model.state_dict()},
+        checkpoint_path,
+    )
+
+    loaded = load_autoencoder_checkpoint(checkpoint_path, expected_seed=42)
+    assert not loaded.training
+    with pytest.raises(ValueError, match="does not match split seed"):
+        load_autoencoder_checkpoint(checkpoint_path, expected_seed=123)

@@ -11,6 +11,7 @@ import numpy as np
 from sklearn import config_context
 from sklearn.neighbors import NearestNeighbors
 
+from wafer_retrieval.data import CLASS_ORDER
 from wafer_retrieval.evaluation import (
     make_stratified_split,
     precision_at_k,
@@ -20,19 +21,6 @@ from wafer_retrieval.features import (
     extract_feature_matrix,
     feature_names,
     scale_database_and_queries,
-)
-
-
-CLASS_ORDER = (
-    "none",
-    "Center",
-    "Donut",
-    "Edge-Ring",
-    "Edge-Loc",
-    "Loc",
-    "Scratch",
-    "Random",
-    "Near-full",
 )
 
 

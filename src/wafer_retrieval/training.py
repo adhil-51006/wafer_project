@@ -1,10 +1,25 @@
 """Training helpers for the categorical wafer-map autoencoder."""
 
+from pathlib import Path
+
 import numpy as np
 import torch
 from torch.nn import functional as F
 
 from wafer_retrieval.autoencoder import WaferAutoencoder, one_hot_maps
+
+
+def load_autoencoder_checkpoint(path: Path, expected_seed: int) -> WaferAutoencoder:
+    """Load saved weights and verify they belong to the requested split."""
+    checkpoint = torch.load(path, map_location="cpu", weights_only=False)
+    if checkpoint["seed"] != expected_seed:
+        raise ValueError(
+            f"Checkpoint seed {checkpoint['seed']} does not match split seed {expected_seed}"
+        )
+    model = WaferAutoencoder(embedding_dim=int(checkpoint["embedding_dim"]))
+    model.load_state_dict(checkpoint["model_state_dict"])
+    model.eval()
+    return model
 
 
 def categorical_reconstruction_loss(

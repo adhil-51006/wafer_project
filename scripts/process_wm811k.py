@@ -12,20 +12,7 @@ from matplotlib.colors import ListedColormap
 import numpy as np
 import pandas as pd
 
-from wafer_retrieval.data import process_labeled_maps
-
-
-CLASS_ORDER = (
-    "none",
-    "Center",
-    "Donut",
-    "Edge-Ring",
-    "Edge-Loc",
-    "Loc",
-    "Scratch",
-    "Random",
-    "Near-full",
-)
+from wafer_retrieval.data import CLASS_ORDER, process_labeled_maps
 
 REFERENCE_COUNTS = {
     "none": 147_431,

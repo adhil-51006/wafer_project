@@ -12,9 +12,7 @@ from sklearn import config_context
 from sklearn.neighbors import NearestNeighbors
 
 from wafer_retrieval.evaluation import make_stratified_split
-from wafer_retrieval.training import extract_embeddings
-
-from run_m5_comparison import load_model
+from wafer_retrieval.training import extract_embeddings, load_autoencoder_checkpoint
 
 
 EXAMPLE_CLASSES = ("none", "Center", "Donut", "Scratch")
@@ -56,7 +54,7 @@ def main() -> None:
     if np.intersect1d(database_indices, query_indices).size:
         raise ValueError("A demo query appears in the training database")
 
-    model = load_model(args.checkpoint, expected_seed=args.seed)
+    model = load_autoencoder_checkpoint(args.checkpoint, expected_seed=args.seed)
     database_vectors = extract_embeddings(model, maps[database_indices])
     query_vectors = extract_embeddings(model, maps[query_indices])
     search = NearestNeighbors(n_neighbors=5, metric="euclidean", algorithm="brute", n_jobs=-1)
